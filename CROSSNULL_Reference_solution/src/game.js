@@ -1,23 +1,22 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { GameLayout } from './game-layout';
 import { handleCellClick, handleRestart } from './handlers';
-import { createEmptyField } from './utils';
-import { STATUS, PLAYER } from './constants';
+import { store } from './redux/store';
 
 export const Game = () => {
-	const [status, setStatus] = useState(STATUS.TURN);
-	const [currentPlayer, setCurrentPlayer] = useState(PLAYER.CROSS);
-	const [field, setField] = useState(createEmptyField());
+  const [, forceRender] = useState(0);
 
-	const state = { status, setStatus, currentPlayer, setCurrentPlayer, field, setField };
+  useEffect(() => {
+    const unsubscribe = store.subscribe(() => {
+      forceRender(x => x + 1);
+    });
+    return () => unsubscribe();
+  }, []);
 
-	return (
-		<GameLayout
-			status={status}
-			currentPlayer={currentPlayer}
-			field={field}
-			handleCellClick={(cellIndex) => handleCellClick(state, cellIndex)}
-			handleRestart={() => handleRestart(state)}
-		/>
-	);
+  return (
+    <GameLayout
+      handleCellClick={(cellIndex) => handleCellClick(cellIndex)}
+      handleRestart={() => handleRestart()}
+    />
+  );
 };

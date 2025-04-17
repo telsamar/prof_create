@@ -1,29 +1,29 @@
+import { store } from '../redux/store';
 import { checkWin, checkEmptyCell } from '../utils';
 import { STATUS, PLAYER } from '../constants';
 
-export const handleCellClick = (
-	{ status, field, currentPlayer, setField, setStatus, setCurrentPlayer },
-	cellIndex,
-) => {
-	if (
-		status === STATUS.WIN ||
-		status === STATUS.DRAW ||
-		field[cellIndex] !== PLAYER.NOBODY
-	) {
-		return;
-	}
+export const handleCellClick = (cellIndex) => {
+  const { status, field, currentPlayer } = store.getState();
 
-	const newField = [...field];
+  if (
+    status === STATUS.WIN ||
+    status === STATUS.DRAW ||
+    field[cellIndex] !== PLAYER.NOBODY
+  ) {
+    return;
+  }
 
-	newField[cellIndex] = currentPlayer;
+  const newField = [...field];
+  newField[cellIndex] = currentPlayer;
 
-	setField(newField);
+  store.dispatch({ type: 'SET_FIELD', payload: newField });
 
-	if (checkWin(newField, currentPlayer)) {
-		setStatus(STATUS.WIN);
-	} else if (checkEmptyCell(newField)) {
-		setCurrentPlayer(currentPlayer === PLAYER.CROSS ? PLAYER.NOUGHT : PLAYER.CROSS);
-	} else {
-		setStatus(STATUS.DRAW);
-	}
+  if (checkWin(newField, currentPlayer)) {
+    store.dispatch({ type: 'SET_STATUS', payload: STATUS.WIN });
+  } else if (checkEmptyCell(newField)) {
+    const nextPlayer = currentPlayer === PLAYER.CROSS ? PLAYER.NOUGHT : PLAYER.CROSS;
+    store.dispatch({ type: 'SET_CURRENT_PLAYER', payload: nextPlayer });
+  } else {
+    store.dispatch({ type: 'SET_STATUS', payload: STATUS.DRAW });
+  }
 };

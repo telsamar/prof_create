@@ -1,14 +1,12 @@
 import PropTypes from 'prop-types';
 import { FieldLayout } from './field-layout';
-import { PLAYER } from '../../constants';
+import { store } from '../../redux/store';
 
-export const Field = ({ field, handleCellClick }) => {
-	return <FieldLayout field={field} handleCellClick={handleCellClick} />;
+export const Field = ({ handleCellClick }) => {
+  const { field } = store.getState();
+  return <FieldLayout field={field} handleCellClick={handleCellClick} />;
 };
 
 Field.propTypes = {
-	field: PropTypes.arrayOf(
-		PropTypes.oneOf([PLAYER.CROSS, PLAYER.NOUGHT, PLAYER.NOBODY]),
-	),
-	handleCellClick: PropTypes.func,
+  handleCellClick: PropTypes.func,
 };
